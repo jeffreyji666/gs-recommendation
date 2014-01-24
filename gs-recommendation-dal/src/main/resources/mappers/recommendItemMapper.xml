@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.ctrip.gs.recommendation.dal.recomm.RecommendItemMapper">
+	<select id="getRecommendItem" resultType="com.ctrip.gs.recommendation.bean.RecommendItem" parameterType="int">
+		select * from recommend_item where id = #{id}
+	</select>
+	
+	<insert id="insertRecommendItem" parameterType="com.ctrip.gs.recommendation.bean.RecommendItem" useGeneratedKeys="true" keyColumn="id">
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+	        SELECT LAST_INSERT_ID() as id
+	    </selectKey>
+        insert into recommend_item(url,name,description,created) values(#{url},#{name},#{description}, #{created})  
+    </insert>
+     
+    <update id="updateRecommendItem" parameterType="com.ctrip.gs.recommendation.bean.RecommendItem">  
+       update recommend_item set url=#{url}, name=#{name}, description=#{description}, modified=#{modified} where id=#{id}  
+    </update>
+     
+    <delete id="deleteRecommendItem" parameterType="int">
+       delete from recommend_item where id=#{id}
+    </delete>
+</mapper>

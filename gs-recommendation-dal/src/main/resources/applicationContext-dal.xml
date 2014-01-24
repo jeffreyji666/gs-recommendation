@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-autowire="byName">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.ctrip.gs.recommendation" />
+	<context:property-placeholder location="classpath*:jdbc.properties" ignore-unresolvable="true" />
+	    
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" >
+        <property name="proxyTargetClass" value="true" />
+    </bean>
+    
+	<bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
+	    <property name="url" value="${master.jdbc.url}" />
+	    <property name="username" value="${master.jdbc.user}" />
+	    <property name="password" value="${master.jdbc.password}" />
+	    <property name="filters" value="stat" />
+	    <property name="maxActive" value="20" />
+	    <property name="initialSize" value="1" />
+	    <property name="maxWait" value="60000" />
+	    <property name="minIdle" value="1" />
+	    <property name="timeBetweenEvictionRunsMillis" value="3000" />
+	    <property name="minEvictableIdleTimeMillis" value="300000" />
+	    <property name="validationQuery" value="SELECT 'x'" />
+	    <property name="testWhileIdle" value="true" />
+	    <property name="testOnBorrow" value="false" />
+	    <property name="testOnReturn" value="false" />
+	    <property name="poolPreparedStatements" value="true" />
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+	</bean>	
+	
+	<bean id="slaveDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
+	    <property name="url" value="${slave.jdbc.url}" />
+	    <property name="username" value="${slave.jdbc.user}" />
+	    <property name="password" value="${slave.jdbc.password}" />
+	    <property name="filters" value="stat" />
+	    <property name="maxActive" value="20" />
+	    <property name="initialSize" value="1" />
+	    <property name="maxWait" value="60000" />
+	    <property name="minIdle" value="1" />
+	    <property name="timeBetweenEvictionRunsMillis" value="3000" />
+	    <property name="minEvictableIdleTimeMillis" value="300000" />
+	    <property name="validationQuery" value="SELECT 'x'" />
+	    <property name="testWhileIdle" value="true" />
+	    <property name="testOnBorrow" value="false" />
+	    <property name="testOnReturn" value="false" />
+	    <property name="poolPreparedStatements" value="true" />
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+	</bean>	
+	
+	<bean id="dataSource" class="com.ctrip.gs.recommendation.db.MasterSlaveRoutingDataSource">
+        <property name="targetDataSources">
+            <map>
+                <entry key="main_master" value-ref="masterDataSource"/>
+                <entry key="main_slave" value-ref="slaveDataSource"/>
+            </map>
+        </property>
+        <property name="dataSourceMap">
+            <list>
+                <value>main: main_master, main_slave</value>
+            </list>
+        </property>
+        <property name="defaultTargetDataSource" ref="masterDataSource"/>
+    </bean>
+    
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+  		<property name="dataSource" ref="dataSource" />
+  		<property  name="configLocation"  value="classpath:sqlMapConfig.xml"/>  
+	</bean>
+	
+	<bean id="recommendItemMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+  		<property name="mapperInterface" value="com.ctrip.gs.recommendation.dal.recomm.RecommendItemMapper" />
+  		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="accountDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
+	    <property name="url" value="${account.jdbc.url}" />
+	    <property name="username" value="${account.jdbc.user}" />
+	    <property name="password" value="${account.jdbc.password}" />
+	    <property name="filters" value="stat" />
+	    <property name="maxActive" value="20" />
+	    <property name="initialSize" value="1" />
+	    <property name="maxWait" value="60000" />
+	    <property name="minIdle" value="1" />
+	    <property name="timeBetweenEvictionRunsMillis" value="3000" />
+	    <property name="minEvictableIdleTimeMillis" value="300000" />
+	    <property name="validationQuery" value="SELECT 'x'" />
+	    <property name="testWhileIdle" value="true" />
+	    <property name="testOnBorrow" value="false" />
+	    <property name="testOnReturn" value="false" />
+	    <property name="poolPreparedStatements" value="true" />
+	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+	</bean>
+	
+	<bean id="accountSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+  		<property name="dataSource" ref="accountDataSource" />
+  		<property  name="configLocation"  value="classpath:accountSqlMapConfig.xml"/>  
+	</bean>
+	
+	<bean id="userBindMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+  		<property name="mapperInterface" value="com.ctrip.gs.recommendation.dal.account.UserBindMapper" />
+  		<property name="sqlSessionFactory" ref="accountSqlSessionFactory" />
+	</bean>
+</beans>

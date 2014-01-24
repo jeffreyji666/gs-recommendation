@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"  href="configuration.xsl"?>
+<configuration>
+	<property>
+		<name>yarn.resourcemanager.resource-tracker.address</name>
+		<value>SVR2368HP360.hadoop.test.sh.ctriptravel.com:8031</value>
+	</property>
+	<property>
+		<name>yarn.resourcemanager.address</name>
+		<value>SVR2368HP360.hadoop.test.sh.ctriptravel.com:8032</value>
+	</property>
+	<property>
+		<name>yarn.resourcemanager.scheduler.address</name>
+		<value>SVR2368HP360.hadoop.test.sh.ctriptravel.com:8030</value>
+	</property>
+	<property>
+		<name>yarn.resourcemanager.admin.address</name>
+		<value>SVR2368HP360.hadoop.test.sh.ctriptravel.com:8033</value>
+	</property>
+</configuration>

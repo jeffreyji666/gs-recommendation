@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"  href="configuration.xsl"?>
+<configuration>
+	<property>
+		<name>hbase.cluster.distributed</name>
+		<value>true</value>
+	</property>
+	<property>
+		<name>hbase.zookeeper.quorum</name>
+		<value>192.168.81.176,192.168.81.177,192.168.81.178</value>
+		<!--value>SVR2368HP360.hadoop.test.sh.ctriptravel.com,SVR2369HP360.hadoop.test.sh.ctriptravel.com,SVR2370HP360.hadoop.test.sh.ctriptravel.com</value -->
+	</property>
+	<property>
+		<name>hbase.rootdir</name>
+		<value>hdfs://ns/hbase</value>
+	</property>
+</configuration>
